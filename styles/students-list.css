@@ -1,0 +1,73 @@
+body {
+    display: grid;
+    grid-template-areas: 
+        "header"
+        "main";
+    font-family: 'Arial', sans-serif;
+    font-size: 22px;
+}
+
+#top-bar {
+    grid-area: "header";
+}
+
+#top-bar nav {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+a {
+    color: #d09292;
+    text-decoration: none;
+    margin-left: 15px;
+}
+
+main {
+    grid-area: "main";
+}
+
+#main-content-header {
+    display: flex;
+    align-items: center;
+}
+
+input {
+    height: 50px;
+    width: 350px;
+    margin-left: 20px;
+}
+
+#students-list {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    row-gap: 5px;
+    column-gap: 10px;
+    width: 100%;
+}
+
+.photo-placeholder {
+    width: 200px;
+    height: 200px;
+    background-color: #dbd1d1;
+    border: 1px solid #888686;
+    border-radius: 20px;
+}
+
+div {
+    width: 150px;
+}
+
+@media only screen and (max-width: 1024px) {
+    #students-list {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    #students-list {
+        grid-template-columns: repeat(1, 1fr);
+        grid-template-rows: repeat(12, 1fr);
+    }
+}

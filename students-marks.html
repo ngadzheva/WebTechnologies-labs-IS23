@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset='utf-8'/>
+
+        <title>Students</title>
+
+        <!-- <link rel="stylesheet" href="styles/reset-css.css" type="text/css" /> -->
+        <link rel='stylesheet' href='styles/styles.css' type='text/css' />
+    </head>
+
+    <body>
+        <main>
+            <section>
+                <header>Students</header>
+
+                <div>Lorem ipsum, or lipsum as it is <span>sometimes</span> known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book. It usually begins with:</div>
+
+                <table>
+                    <thead>
+                        <tr id='header-row'>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Faculty Number</th>
+                            <th id='delete-header'>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class='student'>
+                            <td id='first-name'>Ivan</td>
+                            <td id='last-name'>Ivanov</td>
+                            <td id='fn'>88888</td>
+                            <td id='delete'>
+                                <button>Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section>
+                <header>Add New Student</header>
+
+                <fieldset>
+                    <legend>Add Student's Mark</legend>
+                    <form class='student'>
+                        <label id='message'></label>
+                        <label for='first-name'>First Name</label>    
+                        <input id="first-name" type='text' name='first-name'/>
+                        <label>
+                            Last Name
+                            <input type='text' name='last-name'/>
+                        </label>    
+                        
+                        <label for='fn'>Faculty Number</label>    
+                        <input type='number' name='fn'/>
+                        <label for='mark'>Mark</label>    
+                        <input type='number' name='mark'/>
+                        <input id="submit" type='submit' name='add' value='Add'/>
+                    </form>    
+                </fieldset>
+            </section>
+        </main>
+    </body>
+</html>
