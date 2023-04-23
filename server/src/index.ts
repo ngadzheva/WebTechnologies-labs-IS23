@@ -13,15 +13,19 @@
 // app.listen(3001);
 // console.log('Server listens on port 3001');
 
-const express = require('express');
-const { studentsRouter } = require('./routes/students');
-const { usersRouter } = require('./routes/users');
+// const express = require('express');
+// const { studentsRouter } = require('./routes/students');
+// const { usersRouter } = require('./routes/users');
+
+import * as express from 'express';
+import students from './routes/students';
+import users from './routes/users';
 
 const app = express();
 
 app.use(express.json({ type: 'application/json' }));
 
-app.use('/students', studentsRouter);
-app.use('/users', usersRouter);
+app.use('/students', students);
+app.use('/users', users);
 
 app.listen(3001);
