@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta chareset="utf-8"/>
+
+        <title>Demo</title>
+
+        <script defer src="utils/error-utils.js"></script>
+        <script defer src="utils/fetch-utils.js"></script>
+        <script defer src="services/users-service.js"></script>
+        <script defer src="scripts/register.js"></script>
+        <link rel="stylesheet" href="styles/styles.css"/>
+    </head>
+
+    <body>
+        <!-- This is our user's dashboard page -->
+        <header>
+            <nav>
+                <a href="login.html">Login</a>
+            </nav>
+        </header>
+
+        <main>
+            <section>
+                <header id="main-header">Register</header>
+
+                <fieldset>
+                    <form id="login-form">
+                        <!-- Here we will add the validation errors that we found -->
+                        <label id="errors"></label>
+                        <label for="user-name">User Name</label>
+                        <input type="text" id="user-name" name="userName"/>
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password"/>
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" name="confirm-password"/>
+                        <label for="email">Email</label>
+                        <input type="text" id="email" name="email"/>
+                        <input type="submit" id="register" value="Register"/>
+                    </form>
+                </fieldset>
+            </section>
+        </main>
+    </body>
+</html>

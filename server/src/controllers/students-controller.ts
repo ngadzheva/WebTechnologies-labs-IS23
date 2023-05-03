@@ -29,12 +29,22 @@ export class StudentsController {
     }
 
     public async addStudent(student: IStudent) {
+        student.fn = Number(student.fn);
+        student.mark = Number(student.mark);
+        
         this.studentsData.students.push(student);
 
         await this.saveStudentsData();
     }
 
+    public async deleteStudentByFn(studentFn: number) {
+        const updatedStudents = this.studentsData.students.filter(student => student.fn !== studentFn);
+        this.studentsData.students = updatedStudents;
+
+        await write(studentsJSON, JSON.stringify(this.studentsData));
+    }
+
     private async saveStudentsData(): Promise<void> {
-        await write(studentsJSON, JSON.stringify(this.saveStudentsData));
+        await write(studentsJSON, JSON.stringify(this.studentsData));
     }
 }

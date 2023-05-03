@@ -154,13 +154,7 @@ studentsRouter.delete('/:fn', async (request: Request, response: Response) => {
     const { fn } = request.params;
 
     try {
-        const students = await read(studentsJSON);
-        const parsedStudents = JSON.parse(students);
-
-        const updatedStudents = parsedStudents.students.filter(student => student.fn !== Number(fn));
-        parsedStudents.students = updatedStudents;
-
-        await write(studentsJSON, JSON.stringify(parsedStudents));
+        await studentsController.deleteStudentByFn(Number(fn));
 
         response.status(200).json({ message: "Student deleted successfully" });
     } catch(error) {

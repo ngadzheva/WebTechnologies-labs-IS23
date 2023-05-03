@@ -18,14 +18,16 @@
 // const { usersRouter } = require('./routes/users');
 
 import * as express from 'express';
+import * as cors from 'cors';
 import students from './routes/students';
 import users from './routes/users';
 
 const app = express();
 
+app.use(cors());
 app.use(express.json({ type: 'application/json' }));
 
 app.use('/students', students);
-app.use('/users', users);
+app.use('/', users);
 
 app.listen(3001);
