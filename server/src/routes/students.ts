@@ -14,8 +14,9 @@ let studentsController: StudentsController;
 const getStudentsController = async (request: Request, response: Response, next: () => void) => {
     try {
         studentsController = new StudentsController();
+        console.log('Before intit')
         await studentsController.init();
-
+        console.log('After init')
         next();
     } catch(error) {
         console.error(error);
@@ -25,7 +26,7 @@ const getStudentsController = async (request: Request, response: Response, next:
 
 studentsRouter.use(getStudentsController);
 
-studentsRouter.get('/', (request: Request, response: Response) => {
+studentsRouter.get('/', async (request: Request, response: Response) => {
     // read(studentsJSON)
     //     .then(studentsData => JSON.parse(studentsData))
     //     .then((parsedData: IStudentsData) => response.status(200).json(parsedData))
@@ -34,11 +35,17 @@ studentsRouter.get('/', (request: Request, response: Response) => {
     //         response.status(500).json({ error: 'Internal server error' })
     //     });
 
-    const students = studentsController.getStudentsData();
-    response.status(200).json(students);
+    try {
+        const students = await studentsController.getStudentsData();
+        response.status(200).json(students);
+    } catch (error) {
+        console.error(error);
+
+        response.status(500).json('Internal server error');
+    }
 });
 
-studentsRouter.get('/:fn', (request: Request, response: Response) => {
+studentsRouter.get('/:fn', async (request: Request, response: Response) => {
     const { fn } =  request.params;
 
     // read(studentsJSON)
@@ -57,12 +64,18 @@ studentsRouter.get('/:fn', (request: Request, response: Response) => {
     //         response.status(500).json({ error:  'Interal server error' });
     //     });
 
-    const student = studentsController.getStudentByFn(Number(fn));
+    try {
+        const student = await studentsController.getStudentByFn(Number(fn));
+    
+        if (student) {
+            response.status(200).json(student);
+        } else {
+            response.status(404).json({ message: "Student not found" });
+        }
+    } catch (error) {
+        console.error(error);
 
-    if (student) {
-        response.status(200).json(student);
-    } else {
-        response.status(404).json({ message: "Student not found" });
+        response.status(500).json('Internal server error');
     }
 });
 

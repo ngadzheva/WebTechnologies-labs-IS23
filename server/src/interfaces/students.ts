@@ -2,7 +2,7 @@ export interface IStudent {
     firstName: string;
     lastName: string;
     fn: number;
-    mark: number;
+    marks: Array<number>;
 };
 
 export interface IStudentsData {
