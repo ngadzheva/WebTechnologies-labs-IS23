@@ -14,9 +14,6 @@ let studentsController: StudentsController;
 const getStudentsController = async (request: Request, response: Response, next: () => void) => {
     try {
         studentsController = new StudentsController();
-        console.log('Before intit')
-        await studentsController.init();
-        console.log('After init')
         next();
     } catch(error) {
         console.error(error);
@@ -27,17 +24,14 @@ const getStudentsController = async (request: Request, response: Response, next:
 studentsRouter.use(getStudentsController);
 
 studentsRouter.get('/', async (request: Request, response: Response) => {
-    // read(studentsJSON)
-    //     .then(studentsData => JSON.parse(studentsData))
-    //     .then((parsedData: IStudentsData) => response.status(200).json(parsedData))
-    //     .catch(error => {
-    //         console.error(error);
-    //         response.status(500).json({ error: 'Internal server error' })
-    //     });
-
     try {
         const students = await studentsController.getStudentsData();
-        response.status(200).json(students);
+
+        if (students.length > 0) {
+            response.status(200).json(students);
+        } else {
+            response.status(404).json({ message: 'No students found'});
+        }
     } catch (error) {
         console.error(error);
 
@@ -47,22 +41,6 @@ studentsRouter.get('/', async (request: Request, response: Response) => {
 
 studentsRouter.get('/:fn', async (request: Request, response: Response) => {
     const { fn } =  request.params;
-
-    // read(studentsJSON)
-    //     .then(studentsData => JSON.parse(studentsData))
-    //     .then((parsedData: IStudentsData) => {
-    //         const student = parsedData.students.filter(student => student.fn === Number(fn))
-
-    //         if (student.length > 0) {
-    //             response.status(200).json(student);
-    //         } else {
-    //             response.status(404).json({ message: "Student not found" });
-    //         }
-    //     })
-    //     .catch(error => {
-    //         console.error(error);
-    //         response.status(500).json({ error:  'Interal server error' });
-    //     });
 
     try {
         const student = await studentsController.getStudentByFn(Number(fn));
@@ -82,25 +60,14 @@ studentsRouter.get('/:fn', async (request: Request, response: Response) => {
 studentsRouter.post('/', async (request: Request, response: Response) => {
     const student: IStudent = request.body;
 
-    // read(studentsJSON)
-    //     .then(studentsData => JSON.parse(studentsData))
-    //     .then((parsedData: IStudentsData) => {
-    //         parsedData.students.push(student);
-
-    //         return JSON.stringify(parsedData);
-    //     })
-    //     .then(updatedStudents => write(studentsJSON, updatedStudents))
-    //     .then(() => response.status(201).json({ message: "Student added successfully" }))
-    //     .catch(error => {
-    //         console.error(error);
-
-    //         response.status(500).json({ error: "Internal server error"});
-    //     });
-
     try {
-        await studentsController.addStudent(student);
+        const newStudent = await studentsController.addStudent(student);
 
-        response.status(201).json({ message: "Student added successfully" });
+        if (newStudent) {
+            response.status(201).json({ message: "Student added successfully" });
+        } else {
+            response.status(400).json({ message: 'Student failed to be added' });
+        }
     } catch(error) {
         console.error(error);
         response.status(500).json({ error: "Internal server error"});
@@ -112,22 +79,14 @@ studentsRouter.put('/:fn', async (request: Request, response: Response) => {
     const studentData = request.body;
 
     try {
-        const students = await read(studentsJSON);
-        const parsedStudents = JSON.parse(students);
+        const updatedStudent = await studentsController.updateStudentData(Number(fn), studentData);
 
-        const updatedStudents = parsedStudents.students.map(student => {
-            if (student.fn === Number(fn)) {
-                return studentData;
-            }
+        if (updatedStudent == 1) {
+            response.status(200).json({ message: 'Student updated successfully' });
+        } else {
+            response.status(404).json({ message: 'Student mnot found' });
+        }
 
-            return student;
-        });
-
-        parsedStudents.students = updatedStudents;
-
-        await write(studentsJSON, JSON.stringify(parsedStudents));
-
-        response.status(200).json({ message: 'Student updated successfully' });
     } catch(error) {
         console.error(error);
 
@@ -137,25 +96,20 @@ studentsRouter.put('/:fn', async (request: Request, response: Response) => {
 
 studentsRouter.patch('/:fn', async (request: Request, response: Response) => {
     const { fn } = request.params;
-    const { mark } = request.body;
+    const { marks } = request.body;
 
     try {
-        const students = await read(studentsJSON);
-        const parsedStudents = JSON.parse(students);
+        const studentData = {
+            marks
+        };
 
-        const updatedStudents = parsedStudents.students.map(student => {
-            if (student.fn === Number(fn)) {
-                student.mark = mark;
-            }
+        const updatedStudent = await studentsController.updateStudentData(Number(fn), studentData as IStudent);
 
-            return student;
-        });
-
-        parsedStudents.students = updatedStudents;
-
-        await write(studentsJSON, JSON.stringify(parsedStudents));
-
-        response.status(200).json({ message: 'Student updated successfully' });
+        if (updatedStudent == 1) {
+            response.status(200).json({ message: 'Student updated successfully' });
+        } else {
+            response.status(404).json({ message: 'Student mnot found' });
+        }
     } catch(error) {
         console.error(error);
 
@@ -167,9 +121,13 @@ studentsRouter.delete('/:fn', async (request: Request, response: Response) => {
     const { fn } = request.params;
 
     try {
-        await studentsController.deleteStudentByFn(Number(fn));
+        const deletedStudent = await studentsController.deleteStudentByFn(Number(fn));
 
-        response.status(200).json({ message: "Student deleted successfully" });
+        if (deletedStudent == 1) {
+            response.status(200).json({ message: "Student deleted successfully" });
+        } else {
+            response.status(404).json({ message: 'Student not found' });
+        }
     } catch(error) {
         console.error(error);
 

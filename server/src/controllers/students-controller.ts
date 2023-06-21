@@ -2,6 +2,8 @@ import { IStudent, IStudentsData } from "../interfaces/students";
 import { readFile, write } from "../utils/file-utils";
 import { DataBase } from '../db/index';
 import { MongoClient } from "mongodb";
+import { Student } from "../models/student";
+import mongoose from "mongoose";
 
 const studentsJSON: string = 'resources/students.json';
 const studentsCollection = 'students';
@@ -12,52 +14,38 @@ export class StudentsController {
 
     constructor() {}
 
-    public async init() {
-        try {
-            const db = await new DataBase().connectDB();
-            this.studentsCollection = await db.collection('students');
-        } catch (error) {
-            console.error(error);
-        }
-
-        // const studentsData = await readFile(studentsJSON);
-        
-        // this.studentsData = JSON.parse(studentsData);
+    public async getStudentsData() {
+        return await Student.find({})
+            .sort({firstName: 1, fn: -1})
+            .limit(2)
+            .select({lastName: true, fn: true});
     }
 
-    public async getStudentsData(): Promise<IStudentsData> {
-        return this.studentsCollection.find({});
-        //return this.studentsData;
+    public async getStudentByFn(fn: number) {
+        return await Student.findOne({ fn });
     }
 
-    public async getStudentByFn(fn: number): Promise<IStudent | undefined> {
-        const student = await this.studentsCollection.findOne({ fn });
-        // const student = this.studentsData.students.filter(student => student.fn === fn)
-
-        return student;
-    }
-
-    public async addStudent(student: IStudent): Promise<void> {
+    public async addStudent(student: IStudent) {
         student.fn = Number(student.fn);
         student.marks = student.marks.map(mark => Number(mark));
         
-        this.studentsCollection.insertOne(student);
+        const newStudent = new Student({
+            _id: new mongoose.Types.ObjectId(),
+            ...student
+        });
 
-        // this.studentsData.students.push(student);
-
-        // await this.saveStudentsData();
+        return await newStudent.save();
     }
 
-    public async deleteStudentByFn(studentFn: number): Promise<void> {
-        this.studentsCollection.deleteOne({ fn: studentFn });
+    public async deleteStudentByFn(studentFn: number) {
+        const result = await Student.deleteOne({ fn: studentFn });
 
-        // const updatedStudents = this.studentsData.students.filter(student => student.fn !== studentFn);
-        // this.studentsData.students = updatedStudents;
-
-        // await write(studentsJSON, JSON.stringify(this.studentsData));
+        return result.deletedCount;
     }
 
-    private async saveStudentsData(): Promise<void> {
-        await write(studentsJSON, JSON.stringify(this.studentsData));
+    public async updateStudentData(fn: number, studentData: IStudent) {
+        const result = await Student.updateOne({ fn }, { ...studentData });
+
+        return result.modifiedCount;
     }
 }
